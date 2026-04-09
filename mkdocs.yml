@@ -61,6 +61,7 @@ plugins:
             模型配置与 Prompt Caching: Model Config & Prompt Caching
             介绍: Introduction
             Cloudflare WAF 配置: Cloudflare WAF Configuration
+            Web 搜索与网页浏览: Web Search & Browsing
   - tags
 
 markdown_extensions:
@@ -96,6 +97,7 @@ nav:
   - Copilot Gateway:
       - 介绍: copilot-gateway/introduction.md
       - Cloudflare WAF 配置: copilot-gateway/cloudflare-waf.md
+      - Web 搜索与网页浏览: copilot-gateway/web-browsing.md
   - OpenClaw:
       - 模型配置与 Prompt Caching: openclaw/model-and-prompt-caching.md
 
