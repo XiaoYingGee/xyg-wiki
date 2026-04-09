@@ -66,14 +66,8 @@ Prompt Caching 生效需要**同时满足**以下条件：
 
 [Copilot Gateway](../copilot-gateway/introduction.md) 要求点号格式的模型名。使用短横线格式（如 `claude-sonnet-4-6`）会导致 Copilot API 返回：
 
-```json
-{
-  "error": {
-    "message": "The requested model is not supported.",
-    "code": "model_not_supported",
-    "type": "invalid_request_error"
-  }
-}
+```
+HTTP 400: api_error: Copilot API error: 400 {"error":{"message":"The requested model is not supported.","code":"model_not_supported","param":"model","type":"invalid_request_error"}}
 ```
 
 ## Agent 配置

@@ -66,14 +66,8 @@ Prompt caching requires **all** of the following conditions to be met:
 
 [Copilot Gateway](../copilot-gateway/introduction.md) expects dot-format model names. Using dash format (e.g., `claude-sonnet-4-6`) causes the Copilot API to return:
 
-```json
-{
-  "error": {
-    "message": "The requested model is not supported.",
-    "code": "model_not_supported",
-    "type": "invalid_request_error"
-  }
-}
+```
+HTTP 400: api_error: Copilot API error: 400 {"error":{"message":"The requested model is not supported.","code":"model_not_supported","param":"model","type":"invalid_request_error"}}
 ```
 
 ## Agent Configuration
