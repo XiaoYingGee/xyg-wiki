@@ -44,6 +44,21 @@ plugins:
       lang:
         - zh
         - en
+  - i18n:
+      default_language: zh
+      docs_structure: suffix
+      languages:
+        - locale: zh
+          default: true
+          name: 中文
+          build: true
+        - locale: en
+          name: English
+          build: true
+          nav_translations:
+            首页: Home
+            OpenClaw: OpenClaw
+            模型配置与 Prompt Caching: Model Config & Prompt Caching
   - tags
 
 markdown_extensions:
@@ -83,3 +98,10 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/XiaoYingGee
+  alternate:
+    - name: 中文
+      link: /xyg-wiki/
+      lang: zh
+    - name: English
+      link: /xyg-wiki/en/
+      lang: en

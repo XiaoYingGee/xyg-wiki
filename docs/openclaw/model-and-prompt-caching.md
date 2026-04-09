@@ -1,26 +1,26 @@
-# OpenClaw Model Configuration & Prompt Caching
+# OpenClaw 模型配置与 Prompt Caching
 
-> Last updated: 2026-04-08
+> 最后更新：2026-04-08
 
-## Overview
+## 概述
 
-OpenClaw supports multiple model providers via its plugin architecture. This article documents the configuration for running OpenClaw agents through **copilot-gateway** (a Deno-based Anthropic-to-Copilot API proxy), including critical settings for prompt caching to work correctly.
+OpenClaw 通过插件架构支持多种模型提供商。本文记录了通过 **copilot-gateway**（基于 Deno 的 Anthropic→Copilot API 代理）运行 OpenClaw Agent 的配置方法，包括让 Prompt Caching 正确生效的关键设置。
 
-## Architecture
+## 架构
 
 ```
-Discord / WeChat
+Discord / 微信
       |
-   OpenClaw (gateway)
+   OpenClaw（网关）
       |
    copilot-gateway (copilot.xiaoyinggee.com)
       |
    Anthropic API
 ```
 
-## Provider Configuration
+## Provider 配置
 
-In `~/.openclaw/openclaw.json`, define a custom provider under `models.providers`:
+在 `~/.openclaw/openclaw.json` 中，于 `models.providers` 下定义自定义 provider：
 
 ```json
 {
@@ -44,20 +44,22 @@ In `~/.openclaw/openclaw.json`, define a custom provider under `models.providers
 }
 ```
 
-### Critical: API Format
+### 关键点：API 格式
 
-**Must use `anthropic-messages`**. This is required for prompt caching to work. Other formats (e.g., `openai-completions`) will not trigger Anthropic's cache control headers.
+!!! warning "必须使用 `anthropic-messages`"
+    这是 Prompt Caching 生效的前提条件。使用其他格式（如 `openai-completions`）不会触发 Anthropic 的缓存控制头。
 
-### Critical: Model Name Format
+### 关键点：模型名称格式
 
-**Must use dot notation** for model version numbers:
+!!! danger "必须使用点号格式"
+    模型版本号必须使用**点号**（`.`），不能使用**短横线**（`-`）。
 
-| Format | Example | Result |
-|--------|---------|--------|
-| Dot (correct) | `claude-sonnet-4.6` | Works |
-| Dash (wrong) | `claude-sonnet-4-6` | `400 model_not_supported` |
+| 格式 | 示例 | 结果 |
+|------|------|------|
+| 点号（正确） | `claude-sonnet-4.6` | 正常工作 |
+| 短横线（错误） | `claude-sonnet-4-6` | `400 model_not_supported` |
 
-The copilot-gateway proxy expects dot-format model names. Using dash format (e.g., `claude-sonnet-4-6`) causes the Copilot API to return:
+copilot-gateway 代理要求点号格式的模型名。使用短横线格式（如 `claude-sonnet-4-6`）会导致 Copilot API 返回：
 
 ```json
 {
@@ -69,9 +71,9 @@ The copilot-gateway proxy expects dot-format model names. Using dash format (e.g
 }
 ```
 
-## Agent Configuration
+## Agent 配置
 
-Each agent is defined in `agents.list` with a primary model and optional fallbacks:
+每个 Agent 在 `agents.list` 中定义，包含主模型和可选的备用模型：
 
 ```json
 {
@@ -96,49 +98,49 @@ Each agent is defined in `agents.list` with a primary model and optional fallbac
 }
 ```
 
-### Recommended Model Assignment Strategy
+### 推荐的模型分配策略
 
-| Role | Primary | Fallback | Rationale |
-|------|---------|----------|-----------|
-| Main / lead agent | opus | sonnet | Best quality for primary interactions |
-| Other agents | sonnet | haiku | Balance quality and cost |
-| Sub-agents | sonnet | - | Default for spawned sub-agents |
+| 角色 | 主模型 | 备用模型 | 理由 |
+|------|--------|----------|------|
+| 主 Agent / 领队 | Opus | Sonnet | 主要交互需要最佳质量 |
+| 其他 Agent | Sonnet | Haiku | 平衡质量与成本 |
+| 子 Agent | Sonnet | — | 生成的子 Agent 使用默认模型 |
 
 ## Prompt Caching
 
-### How It Works
+### 工作原理
 
-Prompt caching is handled **server-side** by copilot-gateway, which transparently passes Anthropic's cache control headers. OpenClaw does not need any client-side configuration for caching.
+Prompt Caching 由 copilot-gateway **服务端**处理，它会透明地传递 Anthropic 的缓存控制头。OpenClaw 客户端**无需额外配置**。
 
-On each API call, Anthropic caches the system prompt and conversation history. Subsequent calls within the cache TTL (~5 minutes) reuse the cached tokens, dramatically reducing input token costs.
+每次 API 调用时，Anthropic 会缓存系统提示词和对话历史。在缓存 TTL（约 5 分钟）内的后续调用会复用缓存的 token，大幅降低输入 token 成本。
 
-### Verification
+### 验证方法
 
-Check the session JSONL files at `~/.openclaw/agents/main/sessions/`:
+检查 `~/.openclaw/agents/main/sessions/` 下的会话 JSONL 文件：
 
 ```bash
 tail -10 ~/.openclaw/agents/main/sessions/<session-id>.jsonl | grep -o '"usage":{[^}]*}'
 ```
 
-Look for the `cacheRead` and `cacheWrite` fields:
+查看 `cacheRead` 和 `cacheWrite` 字段：
 
 ```json
-// First call: writes to cache
+// 第一次调用：写入缓存
 {"input": 3, "output": 86, "cacheRead": 0, "cacheWrite": 65353}
 
-// Second call: reads from cache
+// 第二次调用：从缓存读取
 {"input": 3, "output": 43, "cacheRead": 65353, "cacheWrite": 471}
 ```
 
-- **`cacheWrite > 0, cacheRead = 0`**: First call, cache is being populated
-- **`cacheRead > 0`**: Cache hit, tokens are being reused
-- **Both zero**: Caching is not working (check API format)
+- **`cacheWrite > 0, cacheRead = 0`**：首次调用，正在填充缓存
+- **`cacheRead > 0`**：缓存命中，token 被复用
+- **两者都为零**：缓存未生效（检查 API 格式）
 
-### Troubleshooting
+### 故障排查
 
-| Symptom | Cause | Fix |
-|---------|-------|-----|
-| `cacheRead` always 0 | Wrong API format | Set `"api": "anthropic-messages"` |
-| `model_not_supported` error | Wrong model name format | Use dot notation (`4.6` not `4-6`) |
-| Cache miss after long pause | Cache TTL expired (~5min) | Normal behavior, next call repopulates |
-| All usage fields zero | API call failed | Check error logs in `gateway.err.log` |
+| 现象 | 原因 | 解决方法 |
+|------|------|----------|
+| `cacheRead` 始终为 0 | API 格式错误 | 设置 `"api": "anthropic-messages"` |
+| `model_not_supported` 错误 | 模型名称格式错误 | 使用点号格式（`4.6` 而非 `4-6`） |
+| 长时间暂停后缓存未命中 | 缓存 TTL 过期（约 5 分钟） | 正常现象，下次调用会重新填充 |
+| 所有 usage 字段为零 | API 调用失败 | 检查 `gateway.err.log` 错误日志 |
