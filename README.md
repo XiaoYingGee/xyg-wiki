@@ -1,7 +1,5 @@
-# xyg-wiki
+# XYG Wiki
 
-Personal wiki & knowledge base.
+Personal wiki & knowledge base, powered by [MkDocs Material](https://squidfunk.github.io/mkdocs-material/).
 
-## Index
-
-- [OpenClaw Model Configuration & Prompt Caching](openclaw/model-and-prompt-caching.md)
+Visit: [https://xiaoyinggee.github.io/xyg-wiki/](https://xiaoyinggee.github.io/xyg-wiki/)
