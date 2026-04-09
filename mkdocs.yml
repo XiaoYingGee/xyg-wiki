@@ -60,6 +60,7 @@ plugins:
             Copilot Gateway: Copilot Gateway
             模型配置与 Prompt Caching: Model Config & Prompt Caching
             介绍: Introduction
+            Cloudflare WAF 配置: Cloudflare WAF Configuration
   - tags
 
 markdown_extensions:
@@ -94,6 +95,7 @@ nav:
   - 首页: index.md
   - Copilot Gateway:
       - 介绍: copilot-gateway/introduction.md
+      - Cloudflare WAF 配置: copilot-gateway/cloudflare-waf.md
   - OpenClaw:
       - 模型配置与 Prompt Caching: openclaw/model-and-prompt-caching.md
 
