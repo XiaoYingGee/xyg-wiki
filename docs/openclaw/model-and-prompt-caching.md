@@ -44,15 +44,20 @@ Discord / 微信
 }
 ```
 
-### 关键点：API 格式
+### 关键点：Prompt Caching 生效条件
 
-!!! warning "必须使用 `anthropic-messages`"
-    这是 Prompt Caching 生效的前提条件。使用其他格式（如 `openai-completions`）不会触发 Anthropic 的缓存控制头。关于 [Copilot Gateway](../copilot-gateway/introduction.md) 支持的 API 格式，请参阅其介绍文档。
+Prompt Caching 生效需要**同时满足**以下条件：
 
-### 关键点：模型名称格式
+!!! warning "条件一：必须使用 `anthropic-messages` API 格式"
+    使用其他格式（如 `openai-completions`）不会触发 Anthropic 的缓存控制头。关于 [Copilot Gateway](../copilot-gateway/introduction.md) 支持的 API 格式，请参阅其介绍文档。
+
+!!! warning "条件二：必须使用 Claude 系列模型"
+    Prompt Caching 是 Anthropic 的特性，仅对 Claude 系列模型（如 `claude-opus-4.6`、`claude-sonnet-4.6`、`claude-haiku-4.5`）生效。使用其他模型（如 GPT 系列）即使配置了 `anthropic-messages` 格式也不会有缓存效果。
+
+### 关键点：Claude 模型名称格式
 
 !!! danger "必须使用点号格式"
-    模型版本号必须使用**点号**（`.`），不能使用**短横线**（`-`）。
+    通过 Copilot Gateway 使用 Claude 模型时，版本号必须使用**点号**（`.`），不能使用**短横线**（`-`）。这是在实际使用 Claude 模型时发现的问题。
 
 | 格式 | 示例 | 结果 |
 |------|------|------|
@@ -141,6 +146,7 @@ tail -10 ~/.openclaw/agents/main/sessions/<session-id>.jsonl | grep -o '"usage":
 | 现象 | 原因 | 解决方法 |
 |------|------|----------|
 | `cacheRead` 始终为 0 | API 格式错误 | 设置 `"api": "anthropic-messages"` |
-| `model_not_supported` 错误 | 模型名称格式错误 | 使用点号格式（`4.6` 而非 `4-6`） |
+| `cacheRead` 始终为 0 | 使用了非 Claude 模型 | 切换为 Claude 系列模型 |
+| `model_not_supported` 错误 | Claude 模型名称格式错误 | 使用点号格式（`4.6` 而非 `4-6`） |
 | 长时间暂停后缓存未命中 | 缓存 TTL 过期（约 5 分钟） | 正常现象，下次调用会重新填充 |
 | 所有 usage 字段为零 | API 调用失败 | 检查 `gateway.err.log` 错误日志 |

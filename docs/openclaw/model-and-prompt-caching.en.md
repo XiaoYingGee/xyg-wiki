@@ -44,15 +44,20 @@ In `~/.openclaw/openclaw.json`, define a custom provider under `models.providers
 }
 ```
 
-### Critical: API Format
+### Critical: Prompt Caching Requirements
 
-!!! warning "Must use `anthropic-messages`"
-    This is required for prompt caching to work. Other formats (e.g., `openai-completions`) will not trigger Anthropic's cache control headers. See the [Copilot Gateway introduction](../copilot-gateway/introduction.md) for supported API formats.
+Prompt caching requires **all** of the following conditions to be met:
 
-### Critical: Model Name Format
+!!! warning "Condition 1: Must use `anthropic-messages` API format"
+    Other formats (e.g., `openai-completions`) will not trigger Anthropic's cache control headers. See the [Copilot Gateway introduction](../copilot-gateway/introduction.md) for supported API formats.
+
+!!! warning "Condition 2: Must use Claude models"
+    Prompt caching is an Anthropic feature and only works with Claude models (e.g., `claude-opus-4.6`, `claude-sonnet-4.6`, `claude-haiku-4.5`). Other models (e.g., GPT series) will not benefit from caching even with the `anthropic-messages` format.
+
+### Critical: Claude Model Name Format
 
 !!! danger "Must use dot notation"
-    Model version numbers must use **dots** (`.`), not **dashes** (`-`).
+    When using Claude models through Copilot Gateway, version numbers must use **dots** (`.`), not **dashes** (`-`). This is a known issue discovered during actual Claude model usage.
 
 | Format | Example | Result |
 |--------|---------|--------|
@@ -141,6 +146,7 @@ Look for the `cacheRead` and `cacheWrite` fields:
 | Symptom | Cause | Fix |
 |---------|-------|-----|
 | `cacheRead` always 0 | Wrong API format | Set `"api": "anthropic-messages"` |
-| `model_not_supported` error | Wrong model name format | Use dot notation (`4.6` not `4-6`) |
+| `cacheRead` always 0 | Using non-Claude models | Switch to Claude model family |
+| `model_not_supported` error | Wrong Claude model name format | Use dot notation (`4.6` not `4-6`) |
 | Cache miss after long pause | Cache TTL expired (~5min) | Normal behavior, next call repopulates |
 | All usage fields zero | API call failed | Check error logs in `gateway.err.log` |
