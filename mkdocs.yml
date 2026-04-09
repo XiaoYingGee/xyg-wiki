@@ -45,7 +45,6 @@ plugins:
         - zh
         - en
   - i18n:
-      default_language: zh
       docs_structure: suffix
       languages:
         - locale: zh
