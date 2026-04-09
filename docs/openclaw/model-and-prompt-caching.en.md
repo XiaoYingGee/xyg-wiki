@@ -4,7 +4,7 @@
 
 ## Overview
 
-OpenClaw supports multiple model providers via its plugin architecture. This article documents the configuration for running OpenClaw agents through **copilot-gateway** (a Deno-based Anthropic-to-Copilot API proxy), including critical settings for prompt caching to work correctly.
+OpenClaw supports multiple model providers via its plugin architecture. This article documents the configuration for running OpenClaw agents through **[Copilot Gateway](../copilot-gateway/introduction.md)** (a Deno-based GitHub Copilot API proxy), including critical settings for prompt caching to work correctly.
 
 ## Architecture
 
@@ -13,9 +13,9 @@ Discord / WeChat
       |
    OpenClaw (gateway)
       |
-   copilot-gateway (copilot.xiaoyinggee.com)
+   Copilot Gateway (self-hosted)
       |
-   Anthropic API
+   GitHub Copilot API → Anthropic API
 ```
 
 ## Provider Configuration
@@ -27,7 +27,7 @@ In `~/.openclaw/openclaw.json`, define a custom provider under `models.providers
   "models": {
     "providers": {
       "claude-proxy": {
-        "baseUrl": "https://copilot.xiaoyinggee.com",
+        "baseUrl": "https://<your-gateway-domain>",
         "apiKey": "<your-api-key>",
         "api": "anthropic-messages",
         "headers": {
@@ -47,7 +47,7 @@ In `~/.openclaw/openclaw.json`, define a custom provider under `models.providers
 ### Critical: API Format
 
 !!! warning "Must use `anthropic-messages`"
-    This is required for prompt caching to work. Other formats (e.g., `openai-completions`) will not trigger Anthropic's cache control headers.
+    This is required for prompt caching to work. Other formats (e.g., `openai-completions`) will not trigger Anthropic's cache control headers. See the [Copilot Gateway introduction](../copilot-gateway/introduction.md) for supported API formats.
 
 ### Critical: Model Name Format
 
@@ -59,7 +59,7 @@ In `~/.openclaw/openclaw.json`, define a custom provider under `models.providers
 | Dot (correct) | `claude-sonnet-4.6` | Works |
 | Dash (wrong) | `claude-sonnet-4-6` | `400 model_not_supported` |
 
-The copilot-gateway proxy expects dot-format model names. Using dash format (e.g., `claude-sonnet-4-6`) causes the Copilot API to return:
+[Copilot Gateway](../copilot-gateway/introduction.md) expects dot-format model names. Using dash format (e.g., `claude-sonnet-4-6`) causes the Copilot API to return:
 
 ```json
 {
@@ -110,7 +110,7 @@ Each agent is defined in `agents.list` with a primary model and optional fallbac
 
 ### How It Works
 
-Prompt caching is handled **server-side** by copilot-gateway, which transparently passes Anthropic's cache control headers. OpenClaw does not need any client-side configuration for caching.
+Prompt caching is handled **server-side** by [Copilot Gateway](../copilot-gateway/introduction.md), which transparently passes Anthropic's cache control headers. OpenClaw does not need any client-side configuration for caching.
 
 On each API call, Anthropic caches the system prompt and conversation history. Subsequent calls within the cache TTL (~5 minutes) reuse the cached tokens, dramatically reducing input token costs.
 

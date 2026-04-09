@@ -57,7 +57,9 @@ plugins:
           nav_translations:
             首页: Home
             OpenClaw: OpenClaw
+            Copilot Gateway: Copilot Gateway
             模型配置与 Prompt Caching: Model Config & Prompt Caching
+            介绍: Introduction
   - tags
 
 markdown_extensions:
@@ -90,6 +92,8 @@ markdown_extensions:
 
 nav:
   - 首页: index.md
+  - Copilot Gateway:
+      - 介绍: copilot-gateway/introduction.md
   - OpenClaw:
       - 模型配置与 Prompt Caching: openclaw/model-and-prompt-caching.md
 
