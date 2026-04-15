@@ -96,6 +96,7 @@ OpenClaw 支持两种 bot 间通信方式：
 
 ## 参考
 
-- OpenClaw 文档：Agent-to-Agent Communication
-- OpenClaw 文档：Discord allowBots 配置
+- [Anthropic: Effective Context Engineering for AI Agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — Context Rot 概念，context 越长注意力越稀释
+- [Intrinsic Memory Agents (arxiv 2508.08997)](https://arxiv.org/html/2508.08997v1) — 结构化 agent 记忆模板，角色对齐，内生更新
+- [Google A2A Protocol](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/) — 任务级 session 隔离
 - 相关 pitfall：[A2A sessions_send 通信导致 SOUL 遗忘](/knowledge/memory/pitfalls/openclaw-a2a-context-pollution.md)
