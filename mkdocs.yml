@@ -59,6 +59,7 @@ plugins:
             OpenClaw: OpenClaw
             Copilot Gateway: Copilot Gateway
             模型配置与 Prompt Caching: Model Config & Prompt Caching
+            Multi-Agent 通信模式选型: Multi-Agent Communication Patterns
             介绍: Introduction
             Cloudflare WAF 配置: Cloudflare WAF Configuration
             Web 搜索与网页浏览: Web Search & Browsing
@@ -100,6 +101,7 @@ nav:
       - Web 搜索与网页浏览: copilot-gateway/web-browsing.md
   - OpenClaw:
       - 模型配置与 Prompt Caching: openclaw/model-and-prompt-caching.md
+      - Multi-Agent 通信模式选型: openclaw/multi-agent-communication.md
 
 extra:
   social:
