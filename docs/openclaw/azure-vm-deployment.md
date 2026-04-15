@@ -7,14 +7,14 @@
 | 项目 | 值 |
 |------|-----|
 | 主机 | Azure VM |
-| 用户 | xyg |
-| SSH | `ssh xyg`（via Cloudflare Access） |
-| Node.js | v24.14.1（nvm 管理） |
-| npm | 11.11.0 |
-| OpenClaw | 2026.4.14 |
+| 用户 | `<YOUR_VM_USER>` |
+| SSH | `ssh <YOUR_VM_USER>@<YOUR_VM_HOST>`（via Cloudflare Access） |
+| Node.js | v24.x（nvm 管理） |
+| npm | 11.x |
+| OpenClaw | 2026.4.x |
 | 服务管理 | systemd (user session) |
-| 监听端口 | 18789 |
-| Dashboard | http://10.0.0.4:18789/ |
+| 监听端口 | 18789（默认） |
+| Dashboard | `http://<VM_LAN_IP>:18789/` |
 
 ---
 
@@ -24,8 +24,8 @@
 
 ```bash
 source ~/.nvm/nvm.sh
-node --version   # v24.14.1
-npm --version    # 11.11.0
+node --version
+npm --version
 ```
 
 > 注意：Node 通过 nvm 管理，需要先 `source ~/.nvm/nvm.sh` 才能使用。
@@ -40,18 +40,18 @@ openclaw --version  # 验证安装
 
 ### 3. 初始化配置
 
-创建 `~/.openclaw/openclaw.json`（替换 `PENDING_*` 为实际值）：
+创建 `~/.openclaw/openclaw.json`（替换 `<...>` 占位符为实际值）：
 
 ```json
 {
   "meta": {
-    "lastTouchedVersion": "2026.4.14"
+    "lastTouchedVersion": "2026.4.x"
   },
   "models": {
     "providers": {
       "copilot-gateway": {
-        "baseUrl": "https://copilot.xiaoyinggee.com",
-        "apiKey": "<COPILOT_GATEWAY_API_KEY>",
+        "baseUrl": "https://<YOUR_COPILOT_GATEWAY_URL>",
+        "apiKey": "<YOUR_COPILOT_GATEWAY_API_KEY>",
         "api": "anthropic-messages",
         "models": [
           { "id": "claude-sonnet-4.6", "name": "Claude Sonnet 4.6" },
@@ -96,13 +96,11 @@ openclaw gateway status
 
 ## 待配置项
 
-这些内容由主人 (XYG) 分配，填入后重启服务：
-
 | 项目 | 说明 | 填入位置 |
 |------|------|----------|
 | Discord Bot Token | 新建 Bot 的 Token | `plugins.entries.discord.token` |
-| Copilot Gateway API Key | 由主人分配 | `models.providers.copilot-gateway.apiKey` |
-| M2 模式配置 | 主人后续指定 | `gateway.m2` 或相关字段 |
+| Copilot Gateway API Key | 由管理员分配 | `models.providers.copilot-gateway.apiKey` |
+| M2 模式配置 | 后续指定 | `gateway.m2` 或相关字段 |
 
 ---
 
@@ -119,8 +117,8 @@ openclaw gateway status
 ## 已知注意事项
 
 1. **nvm PATH 警告**：systemd 服务配置中 Node 路径来自 nvm，升级 nvm 后可能失效。建议后续安装系统级 Node（`sudo apt install nodejs`）并更新服务配置。
-2. **M2 模式**：尚未配置，等主人指定后再添加。
-3. **与 Mac Mini 实例完全独立**：两个 OpenClaw 实例无关联，各自独立运行。
+2. **M2 模式**：尚未配置，等指定后再添加。
+3. **与其他实例完全独立**：各 OpenClaw 实例无关联，独立运行。
 
 ---
 
