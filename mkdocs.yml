@@ -102,6 +102,7 @@ nav:
   - OpenClaw:
       - 模型配置与 Prompt Caching: openclaw/model-and-prompt-caching.md
       - Multi-Agent 通信模式选型: openclaw/multi-agent-communication.md
+      - Multi-Agent Discord 通信配置: openclaw/multi-agent-discord-config.md
 
 extra:
   social:
